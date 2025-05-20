@@ -4,7 +4,7 @@ from models import User
 from sqlalchemy import select
 
 
-class UserRepository(SQLAlchemyRepository):
+class UserRepository(SQLAlchemyRepository[User]):
     model = User
 
     async def get_by_email(self, email: str) -> User | None:
