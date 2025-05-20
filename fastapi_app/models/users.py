@@ -4,6 +4,8 @@ from .base import Base
 
 class User(Base):
 
+    read_model = None  # Replace with the actual read model if needed
+
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(unique=True, index=True)
     hashed_password: Mapped[str]
