@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     )
     fastapi: FastAPI = FastAPI()
     api_prefix: ApiPrefix = ApiPrefix()
-    database: DatabaseConfig
+    db: DatabaseConfig
 
 
 settings = Settings()
