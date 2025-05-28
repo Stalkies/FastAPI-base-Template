@@ -9,6 +9,14 @@ class FastAPI(BaseModel):
     reload: bool = True
 
 
+class Swagger(BaseModel):
+
+    title: str = "FastAPI Auth API"
+    description: str = "Simple user auth system."
+
+    version: str = "1.0.0"
+
+
 class DatabaseConfig(BaseModel):
     url: PostgresDsn
     echo: bool = False
@@ -42,6 +50,7 @@ class Settings(BaseSettings):
     api_prefix: ApiPrefix = ApiPrefix()
     token: TokenConfig = TokenConfig()
     db: DatabaseConfig
+    swagger: Swagger = Swagger()
 
 
 settings = Settings()
