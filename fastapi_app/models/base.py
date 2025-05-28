@@ -21,6 +21,5 @@ class Base(DeclarativeBase, Generic[T]):
     def model_dump(self) -> dict:
         """Dump the model to a dictionary."""
         return {
-            column.name: getattr(self, column.name)
-            for column in self.__tablename__.columns
+            column.name: getattr(self, column.name) for column in self.__table__.columns
         }

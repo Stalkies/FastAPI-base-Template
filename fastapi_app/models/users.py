@@ -1,10 +1,12 @@
 from sqlalchemy.orm import Mapped, mapped_column
+
+from schemas.auth import UserRead
 from .base import Base
 
 
 class User(Base):
 
-    read_model = None  # Replace with the actual read model if needed
+    read_model = UserRead
 
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(unique=True, index=True)
