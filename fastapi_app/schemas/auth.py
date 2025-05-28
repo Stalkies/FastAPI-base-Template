@@ -20,6 +20,10 @@ class UserInDB(UserRead):
     hashed_password: bytes
 
 
+class UserDBAdd(UserBase):
+    hashed_password: bytes
+
+
 # ==============================#
 
 
