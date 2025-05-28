@@ -33,3 +33,11 @@ class UserLoginRequest(UserBase):
 
 
 # =============================#
+
+
+# =========Response models=======#
+class UserResponse(UserRead):
+    pass
+
+
+# ===============================#

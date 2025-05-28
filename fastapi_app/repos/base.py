@@ -2,6 +2,7 @@ from abc import ABC
 from typing import Generic, Type, TypeVar
 
 from pydantic import BaseModel
+from select import select
 
 from core.database import async_session
 

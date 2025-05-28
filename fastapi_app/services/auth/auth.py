@@ -1,33 +1,53 @@
-import secrets
+from bcrypt import hashpw, gensalt, checkpw
+from fastapi import HTTPException
+from starlette.status import HTTP_401_UNAUTHORIZED
 
 from repos.token import TokenRepository
-from schemas.tokens import TokenCreate, TokenRead
+from repos.user import UserRepository
+from schemas.tokens import TokenRead
+from schemas.auth import UserCreateRequest, UserInDB, UserLoginRequest
+
+from .token import TokenService
 
 
-class TokenService:
-    """Service for managing tokens.
-    This service is responsible for creating, retrieving, and deleting tokens.
-    """
+class AuthorizeService:
+    def __init__(self, user_repository: UserRepository):
+        self._user_repository = user_repository
+        self._token_service = TokenService(TokenRepository())
 
-    def __init__(self, token_repository: TokenRepository):
-        self.token_repository: TokenRepository = token_repository
+    @staticmethod
+    def _hash_password(password: str):
+        pwd_bytes = password.encode()
+        salt = gensalt()
+        return hashpw(pwd_bytes, salt)
 
-    def _generate_token(self):
-        return secrets.token_urlsafe(32)
+    @staticmethod
+    def _verify_password(password: str, hashed_password: bytes):
+        return checkpw(password=password.encode(), hashed_password=hashed_password)
 
-    async def create_token(self, user_id: int) -> TokenRead:
-        token = self._generate_token()
-        token_data = TokenCreate(user_id=user_id, token=token)
-        token_model = await self.token_repository.add(token_data.model_dump())
-        return token_model.to_read_model()
+    async def create_user(self, user_create_request: UserCreateRequest):
+        hashed_password = self._hash_password(user_create_request.password)
+        user_in_db = UserInDB(
+            **user_create_request.model_dump(exclude={"password"}),
+            hashed_password=hashed_password,
+        )
 
-    async def get_token(self, token: str) -> TokenRead | None:
-        token_model = await self.token_repository.get_by_field(token=token)
-        if token_model:
-            return token_model.to_read_model()
-        return None
+        user_record = await self._user_repository.add(user_in_db.model_dump())
+        return user_record.to_read_model()
 
-    async def delete_token(self, token: str) -> None:
-        token_model = await self.token_repository.get_by_field(token=token)
-        if token_model:
-            await self.token_repository.delete(token_model.id)
+
+    async def login_user(self, user_login_request: UserLoginRequest) -> TokenRead:
+        user_record = await self._user_repository.get_by_email(user_login_request.email)
+        if not user_record:
+            raise HTTPException(HTTP_401_UNAUTHORIZED, "Invalid credentials")
+        user_in_db = UserInDB.model_validate(user_record)
+        if self._verify_password(
+            user_login_request.password, user_in_db.hashed_password
+        ):
+            token = await self._token_service.create_token(user_in_db.id)
+            return token
+        else:
+            raise HTTPException(HTTP_401_UNAUTHORIZED, "Invalid credentials")
+
+
+
