@@ -49,8 +49,8 @@ fastapi_app/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/fastapi-auth-api.git
-cd fastapi-auth-api
+git clone https://github.com/Stalkies/FastAPI-base-Template.git
+cd FastAPI-base-Template
 ```
 
 ### 2. Install dependencies
@@ -62,7 +62,7 @@ pip install -r requirements.txt
 Or using [uv](https://github.com/astral-sh/uv):
 
 ```bash
-uv pip install -r requirements.txt
+uv pip install
 ```
 
 ### 3. Setup environment variables
