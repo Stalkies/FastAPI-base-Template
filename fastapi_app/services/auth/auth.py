@@ -5,7 +5,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 from repos.token import TokenRepository
 from repos.user import UserRepository
 from schemas.tokens import TokenRead
-from schemas.auth import UserCreateRequest, UserInDB, UserLoginRequest
+from schemas.auth import UserCreateRequest, UserInDB, UserLoginRequest, UserDBAdd
 
 from .token import TokenService
 
@@ -26,13 +26,16 @@ class AuthorizeService:
         return checkpw(password=password.encode(), hashed_password=hashed_password)
 
     async def create_user(self, user_create_request: UserCreateRequest):
+        user_record = await self._user_repository.get_by_email(user_create_request.email)
+        if user_record:
+            raise HTTPException(status_code=400, detail="User with this email already exists")
         hashed_password = self._hash_password(user_create_request.password)
-        user_in_db = UserInDB(
-            **user_create_request.model_dump(exclude={"password"}),
+        user_db_add_model = UserDBAdd(
+            email=user_create_request.email,
             hashed_password=hashed_password,
         )
 
-        user_record = await self._user_repository.add(user_in_db.model_dump())
+        user_record = await self._user_repository.add(user_db_add_model.model_dump())
         return user_record.to_read_model()
 
 
