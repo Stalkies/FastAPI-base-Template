@@ -10,4 +10,4 @@ class TokenCreate(TokenBase):
 
 
 class TokenRead(TokenCreate):
-    created_at: str
+    created_at: int
