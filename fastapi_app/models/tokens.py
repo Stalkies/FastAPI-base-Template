@@ -8,7 +8,7 @@ from schemas.tokens import TokenRead
 class Token(Base[TokenRead]):
 
     read_model = TokenRead
-
+    id: Mapped[int] = mapped_column(index=True)
     token: Mapped[str] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), index=True)
     user: Mapped["User"] = relationship("User", back_populates="tokens")
