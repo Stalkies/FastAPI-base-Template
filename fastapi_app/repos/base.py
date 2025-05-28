@@ -53,9 +53,6 @@ class AbstractRepository(ABC):
 class SQLAlchemyRepository(Generic[T]):
     model: Type[T]
 
-    def __init__(self, model: Type[T]):
-        self.model = model
-
     async def add(self, obj: dict) -> T:
         """Add an object to the database."""
         async with async_session() as session:
