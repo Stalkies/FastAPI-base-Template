@@ -11,3 +11,4 @@ class TokenCreate(TokenBase):
 
 class TokenRead(TokenCreate):
     created_at: int
+    expire_at: int
