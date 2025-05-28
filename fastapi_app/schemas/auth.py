@@ -1,13 +1,12 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from pydantic import EmailStr
 
 
+# ==========Base models=========#
 class UserBase(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     email: EmailStr
-
-
-class UserCreate(UserBase):
-    password: str
 
 
 class UserRead(UserBase):
@@ -18,4 +17,19 @@ class UserRead(UserBase):
 
 
 class UserInDB(UserRead):
-    hashed_password: str
+    hashed_password: bytes
+
+
+# ==============================#
+
+
+# =========Request models========#
+class UserCreateRequest(UserBase):
+    password: str
+
+
+class UserLoginRequest(UserBase):
+    password: str
+
+
+# =============================#
